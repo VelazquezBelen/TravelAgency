@@ -1,0 +1,161 @@
+<div [@routerTransition]>
+    <app-page-header [heading]="'Travel Packages'" [icon]="'fa-plane'"></app-page-header>
+    <form [formGroup]="dashboardForm" (ngSubmit)="onSubmit()">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header commission-calculation-settings-card-header">
+                        <b>Commission Calculation Settings</b>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                    <label><b>Client Type</b></label>
+                                    <select class="form-control" formControlName="clientType">
+                                        <option *ngFor="let clientType of clientTypeList" [ngValue]="clientType.clientId">{{ clientType.description }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    <label><b>Passengers Ammount</b></label>
+                                    <input class="form-control" formControlName="passengersAmmount">
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <fieldset class="form-group">
+                                    <label><b>Trip Duration</b></label>
+                                    <input class="form-control" formControlName="tripDuration">
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="form-group input-group">
+                                    <input type="text" class="form-control" placeholder="Search Travel Package" formControlName="travelPackageDescription">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-secondary" type="button" (click)="getTravelPackages()"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="card mb-3">
+                                    <div class="card-header">Packages List</div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <tbody>
+                                                <tr *ngFor="let travelPackage of travelPackageList">
+                                                    <td width="90%">{{ travelPackage.description }}</td>
+                                                    <td width="10%">
+                                                        <div class="radio">
+                                                            <label>
+                                                                <input type="radio" formControlName="selectedTravelPackage" [value]="travelPackage">
+                                                            </label>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <fieldset class="form-group">
+                                    <button type="button" class="btn btn-secondary" (click)="selectTravelPackage()">Add selected Package</button>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-2">
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header packages-resume-card-header">
+                        <b>Resume</b>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-3">
+                                    <div class="card-header">Selected Packages</div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <tbody>
+                                                <tr *ngFor="let travelPackage of selectedTravelPackageList">
+                                                    <td width="80%">{{ travelPackage.description }}</td>
+                                                    <td width="10%"><button type="button" class="btn btn-info" (click)="viewTravelPackageDetails(travelPackage.travelPackageId)">View</button></td>
+                                                    <td width="10%"><button type="button" class="btn btn-danger" (click)="removeTravelPackage(travelPackage)">Remove</button></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="p-2">
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <fieldset class="form-group">
+                                            <button type="submit" class="btn btn-primary" [disabled]="!dashboardForm.valid || !selectedTravelPackageList.length > 0">Calculate Commision</button>
+                                        </fieldset>
+                                        <ngb-alert [type]="alert.type" (close)="closeAlert(alert)" *ngFor="let alert of alerts">{{ alert.message }}</ngb-alert>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="p-2">
+        </div>
+        <div class="row" *ngIf="selectedTravelPackage">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header package-details-card-header">
+                        <b>Package Details</b>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-8">
+                                <div class="card mb-3">
+                                    <div class="card-header">{{ selectedTravelPackage.description }}</div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-hover table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <td>Description</td>
+                                                    <td>Type</td>
+                                                    <td>Category</td>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let product of selectedTravelPackage.products">
+                                                    <td>{{ product.description }}</td>
+                                                    <td>{{ product.productType }}</td>
+                                                    <td>{{ product.category }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>                
+    </form>                
+</div>
